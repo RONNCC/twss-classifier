@@ -19,17 +19,26 @@ class NaiveBayes
   
   def train
     # Get hashes from ngrams to their (smoothed) counts.
-    @pos_counts = get_ngram_counts(@pos_training_examples)
-    @neg_counts = get_ngram_counts(@neg_training_examples)
+
+    @pcounts = get_ngram_counts(@pos_training_examples)
+    @ncounts = get_ngram_counts(@neg_training_examples)
+    
+    @pos_counts = @pcounts[0]
+    @neg_counts = @ncounts[0]
+    @pos_countsl = @pcounts[1]
+    @neg_countsl = @ncounts[1]
+
 
     pos_total_count = @pos_counts.values.sum
     neg_total_count = @neg_counts.values.sum
-
+    poslen_total = @pos_countsl.values.sum
+    neglen_total = @neg_countsl.values.sum
+    lenscale = 0.5
     # Get the proportions of ngrams in each corpus.
     @probs = {} # Hash.new { |h, k| h[k] = [0.5, 0.5] }
     (@pos_counts.keys + @neg_counts.keys).uniq.each do |ngram|
-      pos_p = @pos_counts[ngram].to_f / pos_total_count
-      neg_p = @neg_counts[ngram].to_f / neg_total_count
+      pos_p = @pos_counts[ngram].to_f / pos_total_count * (@pos_countsl[ngram].to_f / poslen_total)**lenscale
+      neg_p = @neg_counts[ngram].to_f / neg_total_count * (@neg_countsl[ngram].to_f / neglen_total)**lenscale
       @probs[ngram] = [pos_p, neg_p]
     end
   end
@@ -98,10 +107,14 @@ class NaiveBayes
   
   def get_ngram_counts(sentences)
     h = Hash.new{ |h, k| h[k] = 1 } # Add-one smoothing.
+    l = Hash.new{ |j,l| j[l] = 1}
     sentences.each do |sentence|
-      to_ngrams(sentence, @ngram_size).each{ |ngram| h[ngram] += 1 }      
+      to_ngrams(sentence, @ngram_size).each do |ngram|
+        h[ngram] += 1
+        l[ngram] += sentence.length     
+        end
     end
-    return h    
+    return h,l    
   end
   
   def to_ngrams(str, n)
