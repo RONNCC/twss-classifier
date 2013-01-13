@@ -56,7 +56,7 @@ class NaiveBayes
       end
     end
 
-    return tp, fp, tn, fn   
+    return Hash['tp',tp, 'fp',fp,'tn', tn,'fn', fn,'precision',(1.0*tp)/(tp+fp),'recall',(tp*1.0)/(tp+fn)]   
   end
   
   # Returns the probability that `sentence` is a TWSS sentence.
@@ -94,7 +94,7 @@ class NaiveBayes
     end
   end
   
-  private
+  #private
   
   def get_ngram_counts(sentences)
     h = Hash.new{ |h, k| h[k] = 1 } # Add-one smoothing.
@@ -114,7 +114,6 @@ class NaiveBayes
     
     # Add contextual features if we aren't dealing with unigrams.
     ret = "START " + ret + " END" if n > 1 
-    
     ret = ret.gsub(/\s+/, " ")
     return ret
   end
