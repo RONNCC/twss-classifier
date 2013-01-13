@@ -16,4 +16,4 @@ A Naive Bayes model built for That's What She Said classification.
 Read more about the algorithm [here](http://blog.echen.me/2011/05/05/twss-building-a-thats-what-she-said-classifier/), and see a demo [here](http://twss-classifier.heroku.com/).
 
 
-*Comment*: Though the idea may be 'silly' it's still valid machine learning.
+**Comment**: Though the idea may be 'silly' it's still valid machine learning.
