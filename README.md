@@ -1,3 +1,7 @@
+
+Though the idea may be 'silly' it's still valid machine learning.
+--
+
 # What?!
 
 A Naive Bayes model built for That's What She Said classification.
