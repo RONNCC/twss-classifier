@@ -1,15 +1,20 @@
 require 'yaml'
+require 'memoist'
 
 class Array
+  extend Memoist
   def sum
     self.inject{ |s, t| s + t }
   end 
+  memoize :sum
   def product
     self.inject{ |s, t| s * t }
   end
+  memoize :product
 end
 
 class NaiveBayes
+  extend Memoist
   def initialize(ngram_size, pos_training_examples, neg_training_examples)
     @ngram_size = ngram_size
     @pos_training_examples = pos_training_examples # Array of positive training examples.
@@ -36,8 +41,8 @@ class NaiveBayes
     @probs = {} # Hash.new { |h, k| h[k] = [0.5, 0.5] }
     tprobs = {}
     (@pos_counts.keys + @neg_counts.keys).uniq.each do |ngram|
-      pos_p = @pos_counts[ngram].to_f / pos_total_count *len=1? @pos_countsl[ngram].to_f / poslen_total : 1
-      neg_p = @neg_counts[ngram].to_f / neg_total_count *len=1? @neg_countsl[ngram].to_f / neglen_total : 1
+      pos_p = @pos_counts[ngram].to_f / pos_total_count *(len==1? @pos_countsl[ngram].to_f / poslen_total : 1.0)
+      neg_p = @neg_counts[ngram].to_f / neg_total_count *(len==1? @neg_countsl[ngram].to_f / neglen_total : 1.0)
       tprobs[ngram] = [pos_p,neg_p]
     
     @probs = tprobs
@@ -117,16 +122,18 @@ class NaiveBayes
     end
     return h,l    
   end
+  memoize :get_ngram_counts
   def to_ngrams(str, n)
     normalize(str, n).split.each_slice(n).to_a.map{ |x| x.join(" ") }
   end
+  memoize :to_ngrams
   def normalize(str, n)
     ret = str.downcase
     ret = ret.gsub(/[^a-z0-9\s]/, "")
-    
     # Add contextual features if we aren't dealing with unigrams.
     ret = "START " + ret + " END" if n > 1 
     ret = ret.gsub(/\s+/, " ")
     return ret
   end
+  memoize :normalize
 end

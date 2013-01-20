@@ -10,5 +10,5 @@ set yzeroaxis linetype -1 linewidth 0.5
 set xtics axis
 set ytics axis
 set key off
-plot "graph.data" using 2:3 title "Model Without Len" with lines linewidth 1,\
-     "graph.data" using 4:5 title "Model With Len" with lines linewidth 1
+plot "graph.dat" using 2:3 title "Model Without Len" with lines linewidth 1,\
+     "graph.dat" using 4:5 title "Model With Len" with lines linewidth 1

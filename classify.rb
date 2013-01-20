@@ -12,8 +12,9 @@ POS_TEST_EXAMPLES = ALL_POS_EXAMPLES.last(1000)
 NEG_TEST_EXAMPLES = ALL_NEG_EXAMPLES_FMYLIFE.last(500) + ALL_NEG_EXAMPLES_TFLN.last(500)
 
 nb = NaiveBayes.new(1, POS_TRAINING_EXAMPLES, NEG_TRAINING_EXAMPLES)
-nb.yamlize("twss-classifier.yaml")
-scale = 1000
+nb1 = NaiveBayes.new(1, POS_TRAINING_EXAMPLES, NEG_TRAINING_EXAMPLES)
+#nb.yamlize("twss-classifier.yaml")
+scale =100000
 thresholds = Array.new(scale) {|i| i/(1.0*scale)}
 
 #for thres in thresholds
@@ -21,17 +22,17 @@ thresholds = Array.new(scale) {|i| i/(1.0*scale)}
 #  t=nb.test(thres,POS_TEST_EXAMPLES,NEG_TEST_EXAMPLES)
 #  nb.train(len=1)
 #  t2=nb.test(thres,POS_TEST_EXAMPLES,NEG_TEST_EXAMPLES)
-#  puts  thres.to_s+" "+ t["recall"].to_s+" "+t["precision"].to_s +
-#   " " +  t["recall"].to_s + " " + t["precision"].to_s
+#  puts  thres.to_s+","+ t["recall"].to_s+","+t["precision"].to_s +
+#   "," +  t2["recall"].to_s + "," + t2["precision"].to_s
 #end
 
 a_ = Parallel.map(thresholds) do |thres|
   nb.train(len=0)
   t=nb.test(thres,POS_TEST_EXAMPLES,NEG_TEST_EXAMPLES)
-  nb.train(len=1)
-  t2=nb.test(thres,POS_TEST_EXAMPLES,NEG_TEST_EXAMPLES)
-  puts  thres.to_s+" "+ t["recall"].to_s+" "+t["precision"].to_s +
-   " " +  t["recall"].to_s + " " + t["precision"].to_s
+  nb1.train(len=1)
+  t2=nb1.test(thres,POS_TEST_EXAMPLES,NEG_TEST_EXAMPLES)
+  puts  thres.to_s+","+ t["recall"].to_s+","+t["precision"].to_s +
+   "," +  t2["recall"].to_s + "," + t2["precision"].to_s
 end
 
 
