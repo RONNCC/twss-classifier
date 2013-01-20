@@ -1,0 +1,14 @@
+set terminal svg
+set output "prec_rec.svg"
+set title "Precision vs Recall Graph comparing length feature"
+set xlabel "Recall"
+set ylabel "Precision"
+set xrange[0.6:1.05]
+set yrange [0.4:1.05]
+set xzeroaxis linetype -1 linewidth 0.5
+set yzeroaxis linetype -1 linewidth 0.5
+set xtics axis
+set ytics axis
+set key off
+plot "graph.data" using 2:3 title "Model Without Len" with lines linewidth 1,\
+     "graph.data" using 4:5 title "Model With Len" with lines linewidth 1

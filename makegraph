@@ -1,0 +1,4 @@
+#!/bin/bash
+ruby classify.rb > graph.data
+gnuplot graph.commands
+display prec_rec.svg
