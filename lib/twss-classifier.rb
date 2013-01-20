@@ -4,7 +4,7 @@ require File.expand_path('../twss-classifier/naive-bayes', __FILE__)
 module TWSSClassifier
   
   class << self
-    def is_twss?(line, threshold = 0.9)
+    def is_twss?(line, threshold = 0.1)
       classifier.classify(line) > threshold
     end
 

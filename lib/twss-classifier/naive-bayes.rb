@@ -3,11 +3,10 @@ require 'yaml'
 class Array
   def sum
     self.inject{ |s, t| s + t }
-  end
-  
+  end 
   def product
     self.inject{ |s, t| s * t }
-  end  
+  end
 end
 
 class NaiveBayes
@@ -17,7 +16,7 @@ class NaiveBayes
     @neg_training_examples = neg_training_examples
   end
   
-  def train
+  def train(len=0)
     # Get hashes from ngrams to their (smoothed) counts.
 
     @pcounts = get_ngram_counts(@pos_training_examples)
@@ -33,13 +32,15 @@ class NaiveBayes
     neg_total_count = @neg_counts.values.sum
     poslen_total = @pos_countsl.values.sum
     neglen_total = @neg_countsl.values.sum
-    lenscale = 0.5
     # Get the proportions of ngrams in each corpus.
     @probs = {} # Hash.new { |h, k| h[k] = [0.5, 0.5] }
+    tprobs = {}
     (@pos_counts.keys + @neg_counts.keys).uniq.each do |ngram|
-      pos_p = @pos_counts[ngram].to_f / pos_total_count * (@pos_countsl[ngram].to_f / poslen_total)**lenscale
-      neg_p = @neg_counts[ngram].to_f / neg_total_count * (@neg_countsl[ngram].to_f / neglen_total)**lenscale
-      @probs[ngram] = [pos_p, neg_p]
+      pos_p = @pos_counts[ngram].to_f / pos_total_count *len=1? @pos_countsl[ngram].to_f / poslen_total : 1
+      neg_p = @neg_counts[ngram].to_f / neg_total_count *len=1? @neg_countsl[ngram].to_f / neglen_total : 1
+      tprobs[ngram] = [pos_p,neg_p]
+    
+    @probs = tprobs
     end
   end
   
@@ -111,16 +112,14 @@ class NaiveBayes
     sentences.each do |sentence|
       to_ngrams(sentence, @ngram_size).each do |ngram|
         h[ngram] += 1
-        l[ngram] += sentence.length     
+        l[ngram] += (1.0*ngram.length)/sentence.length     
         end
     end
     return h,l    
   end
-  
   def to_ngrams(str, n)
     normalize(str, n).split.each_slice(n).to_a.map{ |x| x.join(" ") }
   end
-
   def normalize(str, n)
     ret = str.downcase
     ret = ret.gsub(/[^a-z0-9\s]/, "")
